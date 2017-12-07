@@ -19,7 +19,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
-
+            
             view.isMultipleTouchEnabled = false
             view.ignoresSiblingOrder = true
             view.showsFPS = true
@@ -28,15 +28,35 @@ class GameViewController: UIViewController {
             self.scene = GameScene(size: view.bounds.size)
             self.scene.scaleMode = .aspectFit
             
-            self.level = Level(fileName: "Level_1")
+            self.level = Level(fileName: "Level_0")
             self.scene.level = level
             
+            self.scene.swapHandler = hangleSwape(_:)
+            
             view.presentScene(scene)
-          
+            
         }
         
         
         beginGame()
+    }
+    
+    func hangleSwape(_ swap: Swap){
+        view.isUserInteractionEnabled = false
+        
+        if level.isPosibleSwap(swap: swap){
+            level.performSwap(swap)
+            scene.animate(swap) {
+                self.level.removeMatches()
+                self.view.isUserInteractionEnabled = true
+            }
+        }else{
+            scene.animateInvalidSwap(swap, comletion: {
+                self.view.isUserInteractionEnabled = true
+            })
+        }
+        
+         self.view.isUserInteractionEnabled = true
     }
     
     func beginGame()  {
