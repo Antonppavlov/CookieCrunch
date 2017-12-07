@@ -220,7 +220,7 @@ class GameScene: SKScene {
         moveTo.timingMode = .easeOut
         spriteToCookies.run(moveTo, completion:comletion)
         
-         run(soundChomp)
+        run(soundChomp)
     }
     
     func animateInvalidSwap(_ swap:Swap, comletion: @escaping() -> ()){
@@ -244,19 +244,86 @@ class GameScene: SKScene {
         run(soundError)
     }
     
+    //анимация удаления печенек
     func animateRemoveMathes(_ chains:Set<Chain>, comletion: @escaping() -> ()){
         for chain in chains{
             for cookie in chain.cookies{
                 if let sprite = cookie.sprite{
-                    if sprite.action(forKey: "remove") == nil{
+                    if sprite.action(forKey: "removing") == nil{
                         let scaleAction = SKAction.scale(to: 0.1, duration: 0.3)
                         scaleAction.timingMode = .easeOut
                         
-                       // sprite.run(<#T##action: SKAction##SKAction#>)
+                        sprite.run(SKAction.sequence([scaleAction,SKAction.removeFromParent()]), withKey: "removing")
                     }
                 }
             }
         }
+        run(soundChing)
+        run(SKAction.wait(forDuration: 0.3), completion: comletion)
+    }
+    
+    
+    
+    //анимация последовательного падения печенек
+    func animateFallingCookies(arrayColumn:[[Cookie]], comletion: @escaping() -> ()){
+        var longestDuration:TimeInterval = 0
+        
+        for arrayRow in arrayColumn{
+            for(index, cookie) in arrayRow.enumerated(){
+                let newPosition = poinFor(column: cookie.column, row: cookie.row)
+                
+                let delay = 0.05 + 0.15 * TimeInterval(index)
+                
+                let sprite = cookie.sprite!
+                
+                let duration = TimeInterval(((sprite.position.y - newPosition.y) / TitleHeight) * 0.1)
+                
+                longestDuration = max(longestDuration, duration + delay)
+                
+                let moveAction = SKAction.move(to: newPosition, duration: duration)
+                
+                moveAction.timingMode = .easeOut
+                sprite.run(SKAction.sequence([SKAction.wait(forDuration: delay),SKAction.group([moveAction,soundScrape])]))
+            }
+        }
+        run(SKAction.wait(forDuration: longestDuration), completion: comletion)
+    }
+    
+    //анимация последовательного заполнения печенек
+    func animateNewCookies(arrayColumn:[[Cookie]], comletion: @escaping() -> ()){
+        var longestDuration:TimeInterval = 0
+        
+        for arrayRow in arrayColumn{
+            let startRow = arrayRow[0].row + 1
+            for(index, cookie) in arrayRow.enumerated(){
+                let sprite = SKSpriteNode(imageNamed: cookie.cookieType.spriteName)
+                sprite.size = CGSize(width: TitleWith, height: TitleHeight)
+                sprite.position = poinFor(column: cookie.column, row: startRow)
+                cookiesLayer.addChild(sprite)
+                cookie.sprite = sprite
+                
+                let delay = 0.1 + 0.2 * TimeInterval(arrayRow.count - index - 1)
+                
+                let duration = TimeInterval(startRow - cookie.row) * 0.1
+                longestDuration = max(longestDuration, duration +  delay)
+                
+                let newPosition = poinFor(column: cookie.column, row: cookie.row)
+                
+                let moveAction = SKAction.move(to: newPosition,duration:duration)
+                moveAction.timingMode = .easeOut
+                sprite.alpha = 0
+                
+                sprite.run(
+                    SKAction.sequence(
+                        [SKAction.wait(forDuration: delay),
+                         SKAction.group(
+                            [SKAction.fadeIn(withDuration: 0.05),
+                             moveAction,
+                            soundDrip])]))
+            }
+        }
+        run(SKAction.wait(forDuration: longestDuration), completion: comletion)
+        
     }
 }
 

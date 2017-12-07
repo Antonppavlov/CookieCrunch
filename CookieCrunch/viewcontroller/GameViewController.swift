@@ -46,17 +46,31 @@ class GameViewController: UIViewController {
         
         if level.isPosibleSwap(swap: swap){
             level.performSwap(swap)
-            scene.animate(swap) {
-                self.level.removeMatches()
-                self.view.isUserInteractionEnabled = true
-            }
+            scene.animate(swap, comletion: handeRemoveMathes)
         }else{
             scene.animateInvalidSwap(swap, comletion: {
                 self.view.isUserInteractionEnabled = true
             })
         }
         
-         self.view.isUserInteractionEnabled = true
+        self.view.isUserInteractionEnabled = true
+    }
+    
+    func handeRemoveMathes(){
+        let set = self.level.removeMatches()
+        scene.animateRemoveMathes(set) {
+           let arrayColumnRemoveCookies =  self.level.fillHoles()
+            
+            self.scene.animateFallingCookies(arrayColumn: arrayColumnRemoveCookies){
+                let arrayColumnNewCookies =  self.level.topUpCookies()
+              
+                self.scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
+                      self.view.isUserInteractionEnabled = true
+                })
+            }
+           
+        }
+        
     }
     
     func beginGame()  {

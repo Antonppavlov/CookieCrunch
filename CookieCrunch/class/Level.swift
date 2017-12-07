@@ -90,33 +90,33 @@ class Level {
     
     func checkPossibleSwipeCookie(_ cookie:Cookie ,_ column:Int,_ row:Int){
         
-        let cookieSwipe = cookies[column, row]!
-        
-        let swap = Swap(swipeFrom: cookie, swipeTo: cookieSwipe)
-        performSwap(swap)
-        if hasChainAt(column: cookie.column, row: cookie.row){
-            posibleSwap.insert(swap)
+        if let cookieSwipe = cookies[column, row]{
+            let swap = Swap(swipeFrom: cookie, swipeTo: cookieSwipe)
+            performSwap(swap)
+            if hasChainAt(column: cookie.column, row: cookie.row){
+                posibleSwap.insert(swap)
+            }
+            
+            let swapBack = Swap(swipeFrom: cookieSwipe,swipeTo: cookie)
+            performSwap(swapBack)
         }
-        
-        let swapBack = Swap(swipeFrom: cookieSwipe,swipeTo: cookie)
-        performSwap(swapBack)
         
     }
     
     private func hasChainAt(column: Int, row: Int) ->Bool{
-        let swipeCookieType = cookies[column,row]!.cookieType
+        let swipeCookieType = cookies[column,row]?.cookieType
         
         // Horizontal chain check
         var sumEqualCookiesToHorizon = 1
         // Left
         var columnLeftCookieHorizon = column - 1
-        while columnLeftCookieHorizon >= 0 && cookies[columnLeftCookieHorizon,row]!.cookieType == swipeCookieType {
+        while columnLeftCookieHorizon >= 0 && cookies[columnLeftCookieHorizon,row]?.cookieType == swipeCookieType {
             columnLeftCookieHorizon -= 1
             sumEqualCookiesToHorizon += 1
         }
         // Right
         var columnRightCookieHorizon = column + 1
-        while columnRightCookieHorizon < NumColumns && cookies[columnRightCookieHorizon,row]!.cookieType == swipeCookieType {
+        while columnRightCookieHorizon < NumColumns && cookies[columnRightCookieHorizon,row]?.cookieType == swipeCookieType {
             columnRightCookieHorizon += 1
             sumEqualCookiesToHorizon += 1
         }
@@ -127,13 +127,13 @@ class Level {
         var sumEqualCookiesToVertical = 1
         // Down
         var rowDownCookieHorizon = row - 1
-        while rowDownCookieHorizon >= 0 && cookies[column,rowDownCookieHorizon]!.cookieType == swipeCookieType {
+        while rowDownCookieHorizon >= 0 && cookies[column,rowDownCookieHorizon]?.cookieType == swipeCookieType {
             rowDownCookieHorizon -= 1
             sumEqualCookiesToVertical += 1
         }
         // Up
         var rowUpCookieHorizon = row + 1
-        while rowUpCookieHorizon < NumRows && cookies[column,rowUpCookieHorizon]!.cookieType == swipeCookieType {
+        while rowUpCookieHorizon < NumRows && cookies[column,rowUpCookieHorizon]?.cookieType == swipeCookieType {
             rowUpCookieHorizon += 1
             sumEqualCookiesToVertical += 1
         }
@@ -222,7 +222,7 @@ class Level {
                         repeat{
                             chain.add(cookie: cookies[column,row]!)
                             row += 1
-                        }while (row<NumRows && cookies[column,row]!.cookieType == matchesType)
+                        }while (row<NumRows && cookies[column,row]?.cookieType == matchesType)
                         
                         setFindChain.insert(chain)
                     }
@@ -241,9 +241,6 @@ class Level {
         let detectedVertical =  detectedVerticalMatches()
         let detectedHorizontal = detectedHorizontalMatches()
         
-        //        print("detectedVertical: \(detectedVertical)")
-        //        print("detectedHorizontal: \(detectedHorizontal)")
-        
         removeCookies(detectedVertical)
         removeCookies(detectedHorizontal)
         
@@ -258,6 +255,68 @@ class Level {
         }
     }
     
+    //метод заменят удаленные печеньки после свайпа или замены на печеньку выше
+    //возвращает все замененные печеньки в виде массива(колонки) массивов(строки)
+    func fillHoles() -> [[Cookie]]{
+        var arrayColums = [[Cookie]]()
+        
+        for column in 0 ..< NumColumns{
+            var arrayRow = [Cookie]()
+            
+            for row in 0 ..< NumRows{
+                if tiles[column,row] != nil && cookies[column,row] == nil{
+                    for lookup in (row + 1) ..< NumRows{
+                        if let cookie = cookies[column, lookup] {
+                            cookies[column, lookup] = nil
+                            cookies[column, row] = cookie
+                            cookie.row = row
+                            
+                            arrayRow.append(cookie)
+                            
+                            break;
+                        }
+                        
+                    }
+                }
+            }
+            if !arrayRow.isEmpty{
+                arrayColums.append(arrayRow)
+            }
+            
+        }
+        
+        
+        return arrayColums
+    }
+    
+    
+    //метод заполняет удаленные печеньки с значением nil на объекты печенек
+    //возвращает все замененные печеньки в виде массива(колонки) массивов(строки)
+    func topUpCookies() -> [[Cookie]]{
+        var arrayColums = [[Cookie]]()
+        
+        for column in 0 ..< NumColumns{
+            var arrayRow = [Cookie]()
+            
+            var row = NumRows - 1
+            while row >= 0 && tiles[column,row] != nil && cookies[column,row] == nil{
+                
+                let cookie = Cookie(column: column, row: row, cookieType: CookieType.random())
+//                cookie.sprite = SKSpriteNode(
+                arrayRow.append(cookie)
+
+                row -= 1
+            }
+            
+            if !arrayRow.isEmpty{
+                arrayColums.append(arrayRow)
+            }
+            
+        }
+        
+        
+        return arrayColums
+    }
 }
 
 
