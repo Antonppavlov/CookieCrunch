@@ -59,17 +59,20 @@ class GameViewController: UIViewController {
     func handeRemoveMathes(){
         let set = self.level.removeMatches()
         scene.animateRemoveMathes(set) {
-           let arrayColumnRemoveCookies =  self.level.fillHoles()
-            
-            self.scene.animateFallingCookies(arrayColumn: arrayColumnRemoveCookies){
-                let arrayColumnNewCookies =  self.level.topUpCookies()
-              
-                self.scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
-                      self.view.isUserInteractionEnabled = true
-                })
-            }
-           
+         
         }
+        
+        let arrayColumnRemoveCookies =  self.level.fillHoles()
+        scene.animateFallingCookies(arrayColumn: arrayColumnRemoveCookies){
+            
+        }
+        
+       let arrayColumnNewCookies =  self.level.topUpCookies()
+//
+        scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
+            self.view.isUserInteractionEnabled = true
+        })
+        
         
     }
     

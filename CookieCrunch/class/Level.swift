@@ -302,9 +302,9 @@ class Level {
             while row >= 0 && tiles[column,row] != nil && cookies[column,row] == nil{
                 
                 let cookie = Cookie(column: column, row: row, cookieType: CookieType.random())
-//                cookie.sprite = SKSpriteNode(
+               
                 arrayRow.append(cookie)
-
+                cookies[column,row] = cookie
                 row -= 1
             }
             

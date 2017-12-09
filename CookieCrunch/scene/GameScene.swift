@@ -270,6 +270,7 @@ class GameScene: SKScene {
         
         for arrayRow in arrayColumn{
             for(index, cookie) in arrayRow.enumerated(){
+               
                 let newPosition = poinFor(column: cookie.column, row: cookie.row)
                 
                 let delay = 0.05 + 0.15 * TimeInterval(index)
