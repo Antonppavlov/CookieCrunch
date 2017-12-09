@@ -15,6 +15,13 @@ class GameViewController: UIViewController {
     var scene:GameScene!
     var level:Level!
     
+    var moves = 0
+    var score = 0
+    
+    @IBOutlet weak var targetLabel: UILabel!
+    @IBOutlet weak var moveLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,6 +42,7 @@ class GameViewController: UIViewController {
             
             view.presentScene(scene)
             
+           
         }
         
         
@@ -42,38 +50,64 @@ class GameViewController: UIViewController {
     }
     
     func hangleSwape(_ swap: Swap){
+        self.level.detectedPossibleSwaps()
         view.isUserInteractionEnabled = false
         
         if level.isPosibleSwap(swap: swap){
+            decrementMoves()
             level.performSwap(swap)
-            scene.animate(swap, comletion: handeRemoveMathes)
+            scene.animateSwape(swap, comletion: {
+                self.handeRemoveMathes()
+            })
         }else{
             scene.animateInvalidSwap(swap, comletion: {
                 self.view.isUserInteractionEnabled = true
             })
         }
         
-        self.view.isUserInteractionEnabled = true
+      
     }
     
     func handeRemoveMathes(){
-        let set = self.level.removeMatches()
-        scene.animateRemoveMathes(set) {
-           let arrayColumnRemoveCookies =  self.level.fillHoles()
-            
-            self.scene.animateFallingCookies(arrayColumn: arrayColumnRemoveCookies){
-                let arrayColumnNewCookies =  self.level.topUpCookies()
-              
-                self.scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
-                      self.view.isUserInteractionEnabled = true
-                })
+        self.level.detectedPossibleSwaps()
+        
+        let setChain = self.level.removeMatches()
+       
+        if !setChain.isEmpty{
+            for chain in setChain{
+                score += chain.score
+                updateLabels()
             }
-           
+            
+            scene.animateMatchedCookies(setChain, comletion: {
+                
+                let arrayColumnRemoveCookies =  self.level.fillHoles()
+                self.scene.animateFallingCookies(columns:  arrayColumnRemoveCookies, completion: {
+                    
+                    let arrayColumnNewCookies =  self.level.topUpCookies()
+                    self.scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
+                        self.handeRemoveMathes()
+                    })
+                })
+            })
+        }else{
+             level.resetComboMultiplier()
+             self.view.isUserInteractionEnabled = true
         }
         
     }
     
+    func updateLabels(){
+        targetLabel.text = String(format: "%ld", level.targetScore)
+        moveLabel.text =  String(format: "%ld", moves)
+        scoreLabel.text = String(format: "%ld", score)
+    }
+    
     func beginGame()  {
+        moves = level.maximumMoves
+        score = 0
+        updateLabels()
+        level.resetComboMultiplier()
         shuffle()
     }
     
@@ -93,6 +127,11 @@ class GameViewController: UIViewController {
     
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    func decrementMoves(){
+        moves -= 1
+        updateLabels()
     }
 }
 

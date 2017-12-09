@@ -17,6 +17,10 @@ class Level {
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
     private var posibleSwap = Set<Swap>()
     
+    var comboMultiplier = 0
+    
+    var targetScore = 0
+    var maximumMoves = 0
     
     init(fileName:String) {
         guard let dictionary =  Dictionary<String, AnyObject>.loadJsonFromBundle(fileName: fileName) else {return}
@@ -31,6 +35,8 @@ class Level {
                 }
             }
         }
+        targetScore = dictionary["targetScore"] as! Int
+        maximumMoves = dictionary["moves"] as! Int
     }
     
     func tileAt(column:Int, row:Int)->Tile? {
@@ -69,13 +75,13 @@ class Level {
                     if column < NumColumns - 1 {
                         checkPossibleSwipeCookie(cookie, column + 1, row)
                     }
-                    if column < NumColumns && column > 0 {
+                    if  column <= NumColumns && column > 0 {
                         checkPossibleSwipeCookie(cookie, column - 1, row)
                     }
-                    if row < NumRows - 1 {
+                    if  row < NumRows - 1 {
                         checkPossibleSwipeCookie(cookie, column, row + 1)
                     }
-                    if row < NumRows && row > 0 {
+                    if  row <= NumRows && row > 0 {
                         checkPossibleSwipeCookie(cookie, column, row - 1)
                     }
                 }
@@ -84,7 +90,6 @@ class Level {
     }
     
     func isPosibleSwap(swap:Swap)->Bool  {
-        detectedPossibleSwaps()
         return posibleSwap.contains(swap)
     }
     
@@ -93,6 +98,7 @@ class Level {
         if let cookieSwipe = cookies[column, row]{
             let swap = Swap(swipeFrom: cookie, swipeTo: cookieSwipe)
             performSwap(swap)
+            
             if hasChainAt(column: cookie.column, row: cookie.row){
                 posibleSwap.insert(swap)
             }
@@ -181,65 +187,68 @@ class Level {
     }
     
     
-    private func detectedHorizontalMatches() -> Set<Chain> {
-        var setFindChain = Set<Chain>()
+    private func detectHorizontalMatches() -> Set<Chain> {
+        var set = Set<Chain>()
         
         for row in 0 ..< NumRows {
-            for var column in 0 ..< NumColumns - 2{
-                if let cookie = cookies[column,row]{
-                    let matchesType =  cookie.cookieType
+            var column = 0
+            while column < NumColumns-2 {
+                if let cookie = cookies[column, row] {
+                    let matchType = cookie.cookieType
                     
-                    if matchesType == cookies[column+1,row]?.cookieType && matchesType == cookies[column+2,row]?.cookieType{
-                        let chain = Chain(chainType: Chain.ChainType.horizontal)
-                        
-                        repeat{
-                            chain.add(cookie: cookies[column,row]!)
+                    if cookies[column + 1, row]?.cookieType == matchType && cookies[column + 2, row]?.cookieType == matchType {
+                        let chain = Chain(chainType: .horizontal)
+                        repeat {
+                            chain.add(cookie: cookies[column, row]!)
                             column += 1
-                        }while (column<NumColumns && cookies[column,row]!.cookieType == matchesType)
+                        } while column < NumColumns && cookies[column, row]?.cookieType == matchType
                         
-                        setFindChain.insert(chain)
-                        
+                        setScoreChain(chain)
+                        set.insert(chain)
+                        continue
                     }
                 }
+                
+                column += 1
             }
         }
         
-        return setFindChain
-        
+        return set
     }
     
-    private func detectedVerticalMatches() -> Set<Chain>{
-        var setFindChain = Set<Chain>()
+    private func detectVerticalMatches() -> Set<Chain> {
+        var set = Set<Chain>()
         
-        for var row in 0 ..< NumRows  - 2 {
-            for  column in 0 ..< NumColumns {
-                if let cookie = cookies[column,row]{
-                    let matchesType =  cookie.cookieType
+        for column in 0 ..< NumColumns {
+            var row = 0
+            while row < NumRows-2 {
+                if let cookie = cookies[column, row] {
+                    let matchType = cookie.cookieType
                     
-                    if matchesType == cookies[column, row+1]?.cookieType && matchesType == cookies[column, row+2]?.cookieType{
-                        let chain = Chain(chainType: Chain.ChainType.vertical)
-                        
-                        repeat{
-                            chain.add(cookie: cookies[column,row]!)
+                    if cookies[column, row + 1]?.cookieType == matchType && cookies[column, row + 2]?.cookieType == matchType {
+                        let chain = Chain(chainType: .vertical)
+                        repeat {
+                            chain.add(cookie: cookies[column, row]!)
                             row += 1
-                        }while (row<NumRows && cookies[column,row]?.cookieType == matchesType)
+                        } while row < NumRows && cookies[column, row]?.cookieType == matchType
                         
-                        setFindChain.insert(chain)
-                    }
-                    
-                    if  row > NumRows  - 2{
-                        break
+                        setScoreChain(chain)
+                        set.insert(chain)
+                        continue
                     }
                 }
+                
+                row += 1
             }
         }
         
-        return setFindChain
+        return set
     }
+    
     
     func removeMatches() -> Set<Chain>{
-        let detectedVertical =  detectedVerticalMatches()
-        let detectedHorizontal = detectedHorizontalMatches()
+        let detectedVertical =  detectVerticalMatches()
+        let detectedHorizontal = detectHorizontalMatches()
         
         removeCookies(detectedVertical)
         removeCookies(detectedHorizontal)
@@ -302,9 +311,9 @@ class Level {
             while row >= 0 && tiles[column,row] != nil && cookies[column,row] == nil{
                 
                 let cookie = Cookie(column: column, row: row, cookieType: CookieType.random())
-//                cookie.sprite = SKSpriteNode(
+                cookies[column,row] = cookie
                 arrayRow.append(cookie)
-
+                
                 row -= 1
             }
             
@@ -317,6 +326,19 @@ class Level {
         
         return arrayColums
     }
+    
+    func resetComboMultiplier(){
+        comboMultiplier = 1
+    }
+    
+    func setScoreChain(_ chain:Chain) {
+        chain.score = ((chain.cookies.count - 2) * 60) * comboMultiplier
+        
+        comboMultiplier += 1
+    }
+    
+    
+  
 }
 
 

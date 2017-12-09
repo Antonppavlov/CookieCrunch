@@ -12,7 +12,12 @@ class Chain: Hashable, CustomStringConvertible {
     
     
     var cookies = [Cookie]()
+    
+    var score = 0
+    
+    
     var chainType:ChainType
+    
     var lenght:Int{
         return cookies.count
     }
