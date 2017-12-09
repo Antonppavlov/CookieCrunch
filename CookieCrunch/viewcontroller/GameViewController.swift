@@ -95,6 +95,13 @@ class GameViewController: UIViewController {
              self.view.isUserInteractionEnabled = true
         }
         
+       let arrayColumnNewCookies =  self.level.topUpCookies()
+//
+        scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
+            self.view.isUserInteractionEnabled = true
+        })
+        
+        
     }
     
     func updateLabels(){
