@@ -112,6 +112,9 @@
                                 <state key="normal" title="Shuffle" backgroundImage="Button">
                                     <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="shuffleButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Vlz-7h-wjF"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -127,8 +130,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="gameOverPanel" destination="O2m-We-miK" id="Q7y-mW-odm"/>
                         <outlet property="moveLabel" destination="MEc-Pq-3bp" id="Oqg-N7-W4t"/>
                         <outlet property="scoreLabel" destination="Ecg-Du-f1W" id="2hc-fd-04E"/>
+                        <outlet property="shuffleButton" destination="BCi-1j-AHJ" id="ZOH-W5-Rb3"/>
                         <outlet property="targetLabel" destination="XBr-Px-9Jt" id="gQp-if-h0j"/>
                     </connections>
                 </viewController>

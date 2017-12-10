@@ -10,6 +10,7 @@ import Foundation
 
 let NumColumns = 9
 let NumRows = 9
+let NumLevel = 4
 
 class Level {
     

@@ -32,6 +32,8 @@
 		1258D2521FCB7104003166A1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1258D2511FCB7104003166A1 /* Info.plist */; };
 		128249151FD2BF6D00E9498E /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128249141FD2BF6D00E9498E /* Swap.swift */; };
 		12A6F26F1FDC32AF006805A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12A6F26E1FDC32AF006805A5 /* Main.storyboard */; };
+		12BC9D351FDCA7F9000B42A1 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */; };
+		12BC9D371FDCA80F000B42A1 /* Grid.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 12BC9D361FDCA80F000B42A1 /* Grid.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +63,8 @@
 		1258D2511FCB7104003166A1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		128249141FD2BF6D00E9498E /* Swap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		12A6F26E1FDC32AF006805A5 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
+		12BC9D361FDCA80F000B42A1 /* Grid.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Grid.atlas; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,8 @@
 				1258D1E51FC9FC39003166A1 /* delegate */,
 				1258D1E61FC9FC49003166A1 /* storyboard */,
 				1258D1D61FC9F550003166A1 /* Assets.xcassets */,
+				12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */,
+				12BC9D361FDCA80F000B42A1 /* Grid.atlas */,
 				120088C41FD5E9FF00D560F8 /* Sounds */,
 				1258D2461FCB70A9003166A1 /* Levels */,
 				1258D1D81FC9F550003166A1 /* LaunchScreen.storyboard */,
@@ -239,6 +245,7 @@
 			files = (
 				120088CB1FD5E9FF00D560F8 /* Scrape.wav in Resources */,
 				120088CE1FD5E9FF00D560F8 /* Drip.wav in Resources */,
+				12BC9D371FDCA80F000B42A1 /* Grid.atlas in Resources */,
 				1258D24E1FCB70A9003166A1 /* Level_4.json in Resources */,
 				1258D2521FCB7104003166A1 /* Info.plist in Resources */,
 				1258D24D1FCB70A9003166A1 /* Level_3.json in Resources */,
@@ -247,6 +254,7 @@
 				1258D24C1FCB70A9003166A1 /* Level_2.json in Resources */,
 				1258D2501FCB70A9003166A1 /* Level_1.json in Resources */,
 				120088D01FD5E9FF00D560F8 /* Error.wav in Resources */,
+				12BC9D351FDCA7F9000B42A1 /* Sprites.atlas in Resources */,
 				120088CD1FD5E9FF00D560F8 /* Mining by Moonlight.mp3 in Resources */,
 				1258D1D71FC9F550003166A1 /* Assets.xcassets in Resources */,
 				1258D1DA1FC9F550003166A1 /* LaunchScreen.storyboard in Resources */,

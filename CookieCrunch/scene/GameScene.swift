@@ -9,21 +9,21 @@
 import SpriteKit
 import GameplayKit
 
+
 class GameScene: SKScene {
     
-    var level:Level?
+    var level:Level!
     
     private var swipeFromColumn:Int?
     private var swipeFromRow:Int?
     
 
-    
-    let TileWith:CGFloat = 32.0
+    let TileWidth:CGFloat = 32.0
     let TileHeight:CGFloat = 36.0
     
     let gameLayer = SKNode()
     let cookiesLayer = SKNode()
-    let tilesLater = SKNode()
+    let tilesLayer = SKNode()
     
     var swapHandler: ((Swap) -> ())?
     
@@ -34,6 +34,10 @@ class GameScene: SKScene {
     let matchSound = SKAction.playSoundFileNamed("Ka-Ching.wav", waitForCompletion: false)
     let fallingCookieSound = SKAction.playSoundFileNamed("Scrape.wav", waitForCompletion: false)
     let addCookieSound = SKAction.playSoundFileNamed("Drip.wav", waitForCompletion: false)
+    
+    let cropLayer = SKCropNode()
+    let maskLayer = SKNode()
+ 
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -53,23 +57,31 @@ class GameScene: SKScene {
         addChild(background)
         addChild(gameLayer)
         
-        let layerPosition = CGPoint(x: -TileWith*CGFloat(NumColumns)/2, y: -TileHeight*CGFloat(NumRows)/2)
+       
+        let layerPosition = CGPoint(x: -TileWidth*CGFloat(NumColumns)/2, y: -TileHeight*CGFloat(NumRows)/2)
+
+        tilesLayer.position = layerPosition
+      
+        gameLayer.addChild(tilesLayer)
+        gameLayer.addChild(cropLayer)
+        
+        
+        maskLayer.position = layerPosition
+        cropLayer.maskNode = maskLayer
         
         cookiesLayer.position = layerPosition
-        tilesLater.position = layerPosition
+        cropLayer.addChild(cookiesLayer)
         
-        gameLayer.addChild(tilesLater)
-        gameLayer.addChild(cookiesLayer)
-        
-        swipeFromRow = nil
         swipeFromColumn = nil
+        swipeFromRow = nil
         
-        background.zPosition=1
-        gameLayer.zPosition=2
-        tilesLater.zPosition=3
-        cookiesLayer.zPosition=4
+        background.zPosition=100
+        gameLayer.zPosition=200
+        cropLayer.zPosition=300
+        cookiesLayer.zPosition=400
         
         let _ = SKLabelNode(fontNamed: "GillSans-BoldItalic")
+      
     }
     
     func showSelectionIndicatiorForCookies(_ cookie:Cookie){
@@ -82,7 +94,7 @@ class GameScene: SKScene {
             
             selectionSprite.alpha = 1.0
             selectionSprite.run(SKAction.setTexture(texture))
-            selectionSprite.size = CGSize(width: TileWith, height: TileHeight)
+            selectionSprite.size = CGSize(width: TileWidth, height: TileHeight)
             sprite.addChild(selectionSprite)
         }
     }
@@ -91,39 +103,94 @@ class GameScene: SKScene {
         selectionSprite.run(SKAction.sequence([SKAction.fadeOut(withDuration: TimeInterval(0.3)),SKAction.removeFromParent()]))
     }
     
+    func animateGameOver( comletion: @escaping() -> ()){
+        let action = SKAction.move(by: CGVector(dx:0, dy:-size.height), duration: 0.3)
+        action.timingMode = .easeIn
+        gameLayer.run(action, completion: comletion)
+    }
     
-    func addSprite(cookies:Set<Cookie>){
-        for cookie in cookies{
-            
-            let sptiteTile = SKSpriteNode(imageNamed: "Tile")
-            sptiteTile.position = pointFor(column:cookie.column , row:cookie.row)
-            sptiteTile.size = CGSize(width: TileWith, height: TileHeight)
-            sptiteTile.position = pointFor(column:cookie.column , row:cookie.row)
-            tilesLater.addChild(sptiteTile)
-            
-            
-            let imageNamed = cookie.cookieType.spriteName
-            let spriteCookie = SKSpriteNode(imageNamed: imageNamed)
-            spriteCookie.size = CGSize(width: TileWith, height: TileHeight)
-            spriteCookie.position = pointFor(column:cookie.column , row:cookie.row)
-            cookiesLayer.addChild(spriteCookie)
-            cookie.sprite = spriteCookie
-            
-            
+    func animateBeginGame( comletion: @escaping() -> ()){
+        gameLayer.isPaused = false
+        gameLayer.position = CGPoint(x: 0, y: size.height)
+        let action = SKAction.move(by: CGVector(dx:0, dy:-size.height), duration: 0.3)
+        action.timingMode = .easeOut
+        gameLayer.run(action, completion: comletion)
+    }
+    
+    
+    
+    
+    func addTiles() {
+        for row in 0..<NumRows {
+            for column in 0..<NumColumns {
+                if level.tileAt(column: column, row: row) != nil {
+                    let tileNode = SKSpriteNode(imageNamed: "MaskTile")
+                    tileNode.size = CGSize(width: TileWidth, height: TileHeight)
+                    tileNode.position = pointFor(column: column, row: row)
+                    maskLayer.addChild(tileNode)
+                }
+            }
         }
+        
+        for row in 0 ... NumRows {
+            for column in 0 ... NumColumns {
+                let topLeft = (column > 0) && (row < NumRows) && level.tileAt(column: column-1, row: row) != nil
+                let bottomLeft = (column > 0) && (row > 0) && level.tileAt(column: column-1, row: row-1) != nil
+                let topRight = (column < NumColumns) && (row < NumRows) && level.tileAt(column: column, row: row) != nil
+                let bottomRight = (column < NumColumns) && (row > 0) && level.tileAt(column: column, row: row-1) != nil
+                
+                var value = Int(topLeft.hashValue)
+                value |= Int(topRight.hashValue) << 1
+                value |= Int(bottomLeft.hashValue) << 2
+                value |= Int(bottomRight.hashValue) << 3
+                
+                if value != 0 && value != 6 && value != 9 {
+                    let name = String(format: "Tile_%ld", value)
+                    let tileNode = SKSpriteNode(imageNamed: name)
+                    tileNode.size = CGSize(width: TileWidth, height: TileHeight)
+                    var point = pointFor(column: column, row: row)
+                    point.x -= TileWidth/2
+                    point.y -= TileHeight/2
+                    tileNode.position = point
+                    tilesLayer.addChild(tileNode)
+                }
+            }
+        }
+    }
+    
+    func addSprites(for cookies: Set<Cookie>) {
+        for cookie in cookies {
+            let sprite = SKSpriteNode(imageNamed: cookie.cookieType.spriteName)
+            sprite.size = CGSize(width: TileWidth, height: TileHeight)
+            sprite.position = pointFor(column: cookie.column, row: cookie.row)
+            cookiesLayer.addChild(sprite)
+            cookie.sprite = sprite
+            
+            sprite.alpha = 0
+            sprite.xScale = 0.5
+            sprite.yScale = 0.5
+            
+            sprite.run(SKAction.sequence([SKAction.wait(forDuration: 0.25, withRange: 0.5), SKAction.group([SKAction.fadeIn(withDuration: 0.25), SKAction.scale(to: 1.0, duration: 0.25)])]))
+        }
+    }
+    
+    func removeAllCookiesSprite(){
+        maskLayer.removeAllChildren()
+        tilesLayer.removeAllChildren()
+        cookiesLayer.removeAllChildren()
     }
     
     func pointFor(column:Int , row: Int) -> CGPoint {
         return CGPoint(
-            x: CGFloat(column)*TileWith+TileWith/2,
+            x: CGFloat(column)*TileWidth+TileWidth/2,
             y: CGFloat(row)*TileHeight+TileHeight/2
         )
     }
     
     func convertPint(point:CGPoint)->(success:Bool,column:Int,row:Int) {
-        if(point.x >= 0 && point.x <= CGFloat(NumColumns)*TileWith
+        if(point.x >= 0 && point.x <= CGFloat(NumColumns)*TileWidth
             && point.y >= 0 && point.y <= CGFloat(NumRows)*TileHeight){
-            return (true, Int(point.x / TileWith) , Int(point.y / TileHeight))
+            return (true, Int(point.x / TileWidth) , Int(point.y / TileHeight))
         }else{
             return (false,0,0)
         }
@@ -291,7 +358,7 @@ class GameScene: SKScene {
         scoreLabel.run(SKAction.sequence([moveAction,SKAction.removeFromParent()]))
     }
     
-    
+     //анимация падения печенек
     func animateFallingCookies(columns: [[Cookie]], completion: @escaping () -> ()) {
         var longestDuration: TimeInterval = 0
         
@@ -324,7 +391,7 @@ class GameScene: SKScene {
             let startRow = arrayRow[0].row + 1
             for(index, cookie) in arrayRow.enumerated(){
                 let sprite = SKSpriteNode(imageNamed: cookie.cookieType.spriteName)
-                sprite.size = CGSize(width: TileWith, height: TileHeight)
+                sprite.size = CGSize(width: TileWidth, height: TileHeight)
                 sprite.position = pointFor(column: cookie.column, row: startRow)
                 cookiesLayer.addChild(sprite)
                 cookie.sprite = sprite

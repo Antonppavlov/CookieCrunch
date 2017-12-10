@@ -9,6 +9,8 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import AVFoundation
+
 
 class GameViewController: UIViewController {
     
@@ -17,14 +19,35 @@ class GameViewController: UIViewController {
     
     var moves = 0
     var score = 0
+    var currentLevelNum = 0
     
     @IBOutlet weak var targetLabel: UILabel!
     @IBOutlet weak var moveLabel: UILabel!
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var gameOverPanel: UIImageView!
+    @IBOutlet weak var shuffleButton: UIButton!
+    
+    var tapGestureRecognizer: UIGestureRecognizer?
+    
+    lazy var backgroundMusic:AVAudioPlayer? = {
+        guard let url = Bundle.main.url(forResource: "Mining by Moonlight", withExtension: "mp3")else {return nil}
+        
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            return player
+        }catch{
+            return nil
+        }
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupLevelNum(levelNum: currentLevelNum)
+        backgroundMusic?.play()
+    }
+    
+    func setupLevelNum(levelNum: Int){
         if let view = self.view as! SKView? {
             
             view.isMultipleTouchEnabled = false
@@ -35,18 +58,66 @@ class GameViewController: UIViewController {
             self.scene = GameScene(size: view.bounds.size)
             self.scene.scaleMode = .aspectFit
             
-            self.level = Level(fileName: "Level_0")
+            self.level = Level(fileName: "Level_\(levelNum)")
             self.scene.level = level
             
             self.scene.swapHandler = hangleSwape(_:)
             
+            gameOverPanel.isHidden = true
+            shuffleButton.isHidden = true
             view.presentScene(scene)
             
-           
+            beginGame()
         }
+    }
+   
+    
+    func beginGame()  {
+      
+        moves = level.maximumMoves
+        score = 0
+        updateLabels()
+        level.resetComboMultiplier()
+        scene.animateBeginGame {
+            
+            self.shuffleButton.isHidden = false
+        }
+        shuffle()
+    }
+    
+    @IBAction func shuffleButtonPressed(_ sender: Any) {
+        shuffle()
+        decrementMoves()
+    }
+    
+    func shuffle()  {
         
+        scene.removeAllCookiesSprite()
+        scene.addTiles()
+        let newCookies = level.shuffle()
+        scene.addSprites(for: newCookies)
+    }
+    
+    
+    func showGameOverPanel(){
+        shuffleButton.isHidden = true
+        gameOverPanel.isHidden = false
+        scene.isUserInteractionEnabled = false
         
-        beginGame()
+        scene.animateGameOver {
+            self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.hideGameOver))
+            self.view.addGestureRecognizer(self.tapGestureRecognizer!)
+        }
+    }
+    
+    @objc func hideGameOver(){
+        view.removeGestureRecognizer(self.tapGestureRecognizer!)
+        tapGestureRecognizer = nil
+        gameOverPanel.isHidden = true
+        scene.isUserInteractionEnabled = true
+        
+        setupLevelNum(levelNum: currentLevelNum)
+      //  beginGame()
     }
     
     func hangleSwape(_ swap: Swap){
@@ -54,7 +125,7 @@ class GameViewController: UIViewController {
         view.isUserInteractionEnabled = false
         
         if level.isPosibleSwap(swap: swap){
-            decrementMoves()
+            
             level.performSwap(swap)
             scene.animateSwape(swap, comletion: {
                 self.handeRemoveMathes()
@@ -65,14 +136,14 @@ class GameViewController: UIViewController {
             })
         }
         
-      
+        
     }
     
     func handeRemoveMathes(){
         self.level.detectedPossibleSwaps()
         
         let setChain = self.level.removeMatches()
-       
+        
         if !setChain.isEmpty{
             for chain in setChain{
                 score += chain.score
@@ -91,16 +162,10 @@ class GameViewController: UIViewController {
                 })
             })
         }else{
-             level.resetComboMultiplier()
-             self.view.isUserInteractionEnabled = true
-        }
-        
-       let arrayColumnNewCookies =  self.level.topUpCookies()
-//
-        scene.animateNewCookies(arrayColumn: arrayColumnNewCookies, comletion: {
+            decrementMoves()
+            level.resetComboMultiplier()
             self.view.isUserInteractionEnabled = true
-        })
-        
+        }
         
     }
     
@@ -108,19 +173,6 @@ class GameViewController: UIViewController {
         targetLabel.text = String(format: "%ld", level.targetScore)
         moveLabel.text =  String(format: "%ld", moves)
         scoreLabel.text = String(format: "%ld", score)
-    }
-    
-    func beginGame()  {
-        moves = level.maximumMoves
-        score = 0
-        updateLabels()
-        level.resetComboMultiplier()
-        shuffle()
-    }
-    
-    func shuffle()  {
-        let newCookies = level.shuffle()
-        scene.addSprite(cookies: newCookies)
     }
     
     
@@ -137,8 +189,22 @@ class GameViewController: UIViewController {
     }
     
     func decrementMoves(){
+        
         moves -= 1
         updateLabels()
+        
+        if(score >= level.targetScore){
+
+            gameOverPanel.image = UIImage(named: "LevelComplete")
+            currentLevelNum = currentLevelNum < NumLevel ? currentLevelNum + 1 : 1
+            showGameOverPanel()
+        }else if(moves == 0){
+            gameOverPanel.image = UIImage(named: "GameOver")
+            showGameOverPanel()
+        }
+        
     }
 }
+
+
 
