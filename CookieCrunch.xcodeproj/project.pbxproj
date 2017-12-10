@@ -29,7 +29,6 @@
 		1258D24E1FCB70A9003166A1 /* Level_4.json in Resources */ = {isa = PBXBuildFile; fileRef = 1258D2491FCB70A9003166A1 /* Level_4.json */; };
 		1258D24F1FCB70A9003166A1 /* Level_0.json in Resources */ = {isa = PBXBuildFile; fileRef = 1258D24A1FCB70A9003166A1 /* Level_0.json */; };
 		1258D2501FCB70A9003166A1 /* Level_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 1258D24B1FCB70A9003166A1 /* Level_1.json */; };
-		1258D2521FCB7104003166A1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1258D2511FCB7104003166A1 /* Info.plist */; };
 		128249151FD2BF6D00E9498E /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128249141FD2BF6D00E9498E /* Swap.swift */; };
 		12A6F26F1FDC32AF006805A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12A6F26E1FDC32AF006805A5 /* Main.storyboard */; };
 		12BC9D351FDCA7F9000B42A1 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */; };
@@ -211,7 +210,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0910;
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Anton Pavlov";
 				TargetAttributes = {
 					1258D1C51FC9F550003166A1 = {
@@ -247,7 +246,6 @@
 				120088CE1FD5E9FF00D560F8 /* Drip.wav in Resources */,
 				12BC9D371FDCA80F000B42A1 /* Grid.atlas in Resources */,
 				1258D24E1FCB70A9003166A1 /* Level_4.json in Resources */,
-				1258D2521FCB7104003166A1 /* Info.plist in Resources */,
 				1258D24D1FCB70A9003166A1 /* Level_3.json in Resources */,
 				120088CF1FD5E9FF00D560F8 /* Chomp.wav in Resources */,
 				12A6F26F1FDC32AF006805A5 /* Main.storyboard in Resources */,

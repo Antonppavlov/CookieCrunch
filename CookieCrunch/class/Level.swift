@@ -302,30 +302,36 @@ class Level {
     
     //метод заполняет удаленные печеньки с значением nil на объекты печенек
     //возвращает все замененные печеньки в виде массива(колонки) массивов(строки)
-    func topUpCookies() -> [[Cookie]]{
-        var arrayColums = [[Cookie]]()
+    func topUpCookies() -> [[Cookie]] {
+        var columns = [[Cookie]]()
+        var cookieType: CookieType = .unknown
         
-        for column in 0 ..< NumColumns{
-            var arrayRow = [Cookie]()
+        for column in 0 ..< NumColumns {
+            var array = [Cookie]()
             
             var row = NumRows - 1
-            while row >= 0 && tiles[column,row] != nil && cookies[column,row] == nil{
-                
-                let cookie = Cookie(column: column, row: row, cookieType: CookieType.random())
-                cookies[column,row] = cookie
-                arrayRow.append(cookie)
+            while row >= 0 && cookies[column, row] == nil {
+                if tiles[column, row] != nil {
+                    var newCookieType: CookieType
+                    repeat {
+                        newCookieType = CookieType.random()
+                    } while newCookieType == cookieType
+                    cookieType = newCookieType
+                    
+                    let cookie = Cookie(column: column, row: row, cookieType: cookieType)
+                    cookies[column, row] = cookie
+                    array.append(cookie)
+                }
                 
                 row -= 1
             }
             
-            if !arrayRow.isEmpty{
-                arrayColums.append(arrayRow)
+            if !array.isEmpty {
+                columns.append(array)
             }
-            
         }
         
-        
-        return arrayColums
+        return columns
     }
     
     func resetComboMultiplier(){
