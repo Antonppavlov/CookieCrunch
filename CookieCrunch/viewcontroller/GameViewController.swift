@@ -19,7 +19,9 @@ class GameViewController: UIViewController {
     
     var moves = 0
     var score = 0
-    var currentLevelNum = 0
+    
+     let appStorage = AppStorage()
+//    var currentLevelNum = 0
     
     @IBOutlet weak var targetLabel: UILabel!
     @IBOutlet weak var moveLabel: UILabel!
@@ -40,10 +42,16 @@ class GameViewController: UIViewController {
             return nil
         }
     }()
-    
+   
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLevelNum(levelNum: currentLevelNum)
+        
+        if(!appStorage.isCurrentLevel()){
+            appStorage.save(currentLevel: 0)
+        }
+        
+        setupLevelNum(levelNum: appStorage.fetchCurrentLevel()!)
+        
         backgroundMusic?.play()
     }
     
@@ -116,7 +124,7 @@ class GameViewController: UIViewController {
         gameOverPanel.isHidden = true
         scene.isUserInteractionEnabled = true
         
-        setupLevelNum(levelNum: currentLevelNum)
+        setupLevelNum(levelNum: appStorage.fetchCurrentLevel()!)
       //  beginGame()
     }
     
@@ -196,7 +204,10 @@ class GameViewController: UIViewController {
         if(score >= level.targetScore){
 
             gameOverPanel.image = UIImage(named: "LevelComplete")
-            currentLevelNum = currentLevelNum < NumLevel ? currentLevelNum + 1 : 1
+            
+            let currentLevelNum = appStorage.fetchCurrentLevel()!
+            appStorage.save(currentLevel: currentLevelNum < NumLevel ? currentLevelNum + 1 : 0 )
+            
             showGameOverPanel()
         }else if(moves == 0){
             gameOverPanel.image = UIImage(named: "GameOver")

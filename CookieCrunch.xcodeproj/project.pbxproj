@@ -30,6 +30,12 @@
 		1258D24F1FCB70A9003166A1 /* Level_0.json in Resources */ = {isa = PBXBuildFile; fileRef = 1258D24A1FCB70A9003166A1 /* Level_0.json */; };
 		1258D2501FCB70A9003166A1 /* Level_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 1258D24B1FCB70A9003166A1 /* Level_1.json */; };
 		128249151FD2BF6D00E9498E /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128249141FD2BF6D00E9498E /* Swap.swift */; };
+		128E8B71200B81F900AF13AB /* AppStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128E8B70200B81F900AF13AB /* AppStorage.swift */; };
+		128E8B77200B915C00AF13AB /* Level_6.json in Resources */ = {isa = PBXBuildFile; fileRef = 128E8B72200B915B00AF13AB /* Level_6.json */; };
+		128E8B78200B915C00AF13AB /* Level_8.json in Resources */ = {isa = PBXBuildFile; fileRef = 128E8B73200B915C00AF13AB /* Level_8.json */; };
+		128E8B79200B915C00AF13AB /* Level_9.json in Resources */ = {isa = PBXBuildFile; fileRef = 128E8B74200B915C00AF13AB /* Level_9.json */; };
+		128E8B7A200B915C00AF13AB /* Level_5.json in Resources */ = {isa = PBXBuildFile; fileRef = 128E8B75200B915C00AF13AB /* Level_5.json */; };
+		128E8B7B200B915C00AF13AB /* Level_7.json in Resources */ = {isa = PBXBuildFile; fileRef = 128E8B76200B915C00AF13AB /* Level_7.json */; };
 		12A6F26F1FDC32AF006805A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12A6F26E1FDC32AF006805A5 /* Main.storyboard */; };
 		12BC9D351FDCA7F9000B42A1 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */; };
 		12BC9D371FDCA80F000B42A1 /* Grid.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 12BC9D361FDCA80F000B42A1 /* Grid.atlas */; };
@@ -61,6 +67,12 @@
 		1258D24B1FCB70A9003166A1 /* Level_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_1.json; sourceTree = "<group>"; };
 		1258D2511FCB7104003166A1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		128249141FD2BF6D00E9498E /* Swap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
+		128E8B70200B81F900AF13AB /* AppStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorage.swift; sourceTree = "<group>"; };
+		128E8B72200B915B00AF13AB /* Level_6.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_6.json; sourceTree = "<group>"; };
+		128E8B73200B915C00AF13AB /* Level_8.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_8.json; sourceTree = "<group>"; };
+		128E8B74200B915C00AF13AB /* Level_9.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_9.json; sourceTree = "<group>"; };
+		128E8B75200B915C00AF13AB /* Level_5.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_5.json; sourceTree = "<group>"; };
+		128E8B76200B915C00AF13AB /* Level_7.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_7.json; sourceTree = "<group>"; };
 		12A6F26E1FDC32AF006805A5 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		12BC9D341FDCA7F9000B42A1 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
 		12BC9D361FDCA80F000B42A1 /* Grid.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Grid.atlas; sourceTree = "<group>"; };
@@ -135,6 +147,7 @@
 				1258D20B1FCB0689003166A1 /* Extensions.swift */,
 				128249141FD2BF6D00E9498E /* Swap.swift */,
 				120088D11FD6C8C400D560F8 /* Chain.swift */,
+				128E8B70200B81F900AF13AB /* AppStorage.swift */,
 			);
 			path = class;
 			sourceTree = "<group>";
@@ -174,11 +187,16 @@
 		1258D2461FCB70A9003166A1 /* Levels */ = {
 			isa = PBXGroup;
 			children = (
+				1258D24A1FCB70A9003166A1 /* Level_0.json */,
+				1258D24B1FCB70A9003166A1 /* Level_1.json */,
 				1258D2471FCB70A9003166A1 /* Level_2.json */,
 				1258D2481FCB70A9003166A1 /* Level_3.json */,
 				1258D2491FCB70A9003166A1 /* Level_4.json */,
-				1258D24A1FCB70A9003166A1 /* Level_0.json */,
-				1258D24B1FCB70A9003166A1 /* Level_1.json */,
+				128E8B75200B915C00AF13AB /* Level_5.json */,
+				128E8B72200B915B00AF13AB /* Level_6.json */,
+				128E8B76200B915C00AF13AB /* Level_7.json */,
+				128E8B73200B915C00AF13AB /* Level_8.json */,
+				128E8B74200B915C00AF13AB /* Level_9.json */,
 			);
 			path = Levels;
 			sourceTree = "<group>";
@@ -243,6 +261,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				120088CB1FD5E9FF00D560F8 /* Scrape.wav in Resources */,
+				128E8B79200B915C00AF13AB /* Level_9.json in Resources */,
+				128E8B78200B915C00AF13AB /* Level_8.json in Resources */,
 				120088CE1FD5E9FF00D560F8 /* Drip.wav in Resources */,
 				12BC9D371FDCA80F000B42A1 /* Grid.atlas in Resources */,
 				1258D24E1FCB70A9003166A1 /* Level_4.json in Resources */,
@@ -253,8 +273,11 @@
 				1258D2501FCB70A9003166A1 /* Level_1.json in Resources */,
 				120088D01FD5E9FF00D560F8 /* Error.wav in Resources */,
 				12BC9D351FDCA7F9000B42A1 /* Sprites.atlas in Resources */,
+				128E8B7B200B915C00AF13AB /* Level_7.json in Resources */,
 				120088CD1FD5E9FF00D560F8 /* Mining by Moonlight.mp3 in Resources */,
 				1258D1D71FC9F550003166A1 /* Assets.xcassets in Resources */,
+				128E8B77200B915C00AF13AB /* Level_6.json in Resources */,
+				128E8B7A200B915C00AF13AB /* Level_5.json in Resources */,
 				1258D1DA1FC9F550003166A1 /* LaunchScreen.storyboard in Resources */,
 				1258D24F1FCB70A9003166A1 /* Level_0.json in Resources */,
 				120088CC1FD5E9FF00D560F8 /* Ka-Ching.wav in Resources */,
@@ -270,6 +293,7 @@
 			files = (
 				1258D1EE1FCA3419003166A1 /* Level.swift in Sources */,
 				1258D1D01FC9F550003166A1 /* GameScene.swift in Sources */,
+				128E8B71200B81F900AF13AB /* AppStorage.swift in Sources */,
 				1258D2091FCB05DF003166A1 /* Tile.swift in Sources */,
 				1258D20C1FCB0689003166A1 /* Extensions.swift in Sources */,
 				1258D1EA1FC9FCBE003166A1 /* Cookie.swift in Sources */,
